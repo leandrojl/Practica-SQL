@@ -50,19 +50,35 @@ constraint provisto_por_pk primary key (cod_mat, cod_prov),
 foreign key (cod_mat) references material(cod_mat),
 foreign key (cod_prov) references proveedor(cod_prov));
 
+insert into almacen
+(nro, nombre, responsable)
+VALUES (1, "Coto", "inscripto");
+
+insert into contiene
+(nro, cod_art)
+VALUES (1,7);
+
 insert into articulo
 (cod_art, descripcion, precio)
 VALUES (1, 'Almidon', 1000), (2, 'Azufre', 800), (3, 'Azucar', 1000), (4, 'Detergente', 1500);
 
 insert into articulo
 (cod_art, descripcion, precio)
-values (4, 'Detergente', 1500);
+values (6, 'Detergente Premium', 15000);
+
+insert into articulo
+(cod_art, descripcion, precio)
+values (7, 'A', 15000);
 
 select * from articulo;
 
 insert into ciudad
 (cod_ciu, nombre)
 values (1, 'Buenos Aires'), (2, 'Santa fe');
+
+insert into ciudad
+(cod_ciu, nombre)
+values (3, 'La Plata');
 
 insert into proveedor
 (cod_prov, nombre, domicilio, cod_ciu, fecha_alta)
@@ -75,6 +91,10 @@ values (3, 'Sergio', 'Av. 9 de Julio 520', 1, '2001-10-12');
 insert into proveedor
 (cod_prov, nombre, domicilio, cod_ciu, fecha_alta)
 values (4, 'Manuel', 'Suipacha 720', 1, '2001-10-12');
+
+insert into proveedor
+(cod_prov, nombre, domicilio, cod_ciu, fecha_alta)
+values (5, 'Manuelita', '14 y 20', 3, '2001-10-12');
 
 select * from proveedor;
 
@@ -108,14 +128,63 @@ Listar la descripción de los materiales de código 1, 3, 6, 9 y 18.
 */
 
 select cod_mat,descripcion from material
-where cod_mat in (1,3,6,9,18)
+where cod_mat in (1,3,6,9,18);
 
 /*EJERCICIO 4:
 Listar código y nombre de proveedores de la calle Suipacha, que hayan sido dados
 de alta en el año 2001.
 */
 
+select cod_prov, nombre
+FROM proveedor
+where fecha_alta between '2001-01-01' and '2001-12-31' and domicilio like '%Suipacha%';
+
+/*
+5. Listar nombre de todos los proveedores y de su ciudad.
+*/
+
+select PROV.nombre, ciu.nombre
+from proveedor PROV join ciudad CIU
+where PROV.cod_ciu = CIU.cod_ciu;
+
+/*
+6. Listar los nombres de los proveedores de la ciudad de La Plata.
+*/
+
+select PROV.nombre, CIU.nombre
+from proveedor prov join ciudad ciu
+where prov.cod_ciu = ciu.cod_ciu and ciu.nombre like "%La Plata%";
+
+/*
+7. Listar los números de almacenes que almacenan el artículo de descripción A.
+*/
+
+select *
+from almacen;
+
+select *
+from articulo;
+
+select *
+from contiene;
+
+SELECT ALM.nro
+FROM almacen ALM 
+JOIN contiene CON ON ALM.nro = CON.nro
+JOIN articulo ART ON CON.cod_art = ART.cod_art
+WHERE ART.descripcion = 'A';
 
 
+/*
+8. Listar los materiales (código y descripción) provistos por proveedores de la ciudad
+de Rosario.
+*/
 
+/*
+9. Listar los nombres de los proveedores que proveen materiales para artículos
+ubicados en almacenes que Martín Gómez tiene a su cargo.
+*/
 
+/*
+10. Mover los artículos almacenados en el almacén de número 10 al de número 20
+*/
