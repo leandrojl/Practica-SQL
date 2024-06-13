@@ -264,15 +264,80 @@ SELECT a.descripcion, count(c.cod_mat) as cantidad_materiales
 
 /*
 15. Listar cantidad de materiales que provee cada proveedor (código, nombre y
-domicilio)
+domicilio)*/
+
+select prov.cod_prov, prov.nombre, prov.domicilio, count(cod_mat) as cantidad_materiales_que_provee
+from proveedor prov
+join provisto_por pp on pp.cod_prov = prov.cod_prov
+group by prov.cod_prov, prov.nombre, prov.domicilio;
+
+
+
+/*
 16. Cuál es el precio máximo de los artículos que proveen los proveedores de la ciudad
-de Zárate.
-17. Listar los nombres de aquellos proveedores que no proveen ningún material.
+de Zárate.*/
+
+
+
+/*
+17. Listar los nombres de aquellos proveedores que no proveen ningún material.*/
+
+select prov.nombre
+from proveedor prov
+where not exists
+(select 1
+from provisto_por pp
+where pp.cod_prov = prov.cod_prov);
+
+
+/*
 18. Listar los códigos de los materiales que provea el proveedor 10 y no los provea el
-proveedor 15.
+proveedor 15.*/
+
+select mat.cod_mat
+from material mat
+where exists
+(select pp.cod_mat 
+from provisto_por pp 
+where mat.cod_mat = pp.cod_mat
+and pp.cod_prov =10)
+and not exists
+(select pp2.cod_mat
+from provisto_por pp2
+where mat.cod_mat = pp2.cod_mat
+and pp2.cod_prov = 15);
+
+
+
+
+/*
 19. Listar número y nombre de almacenes que contienen los artículos de descripción A
 y los de descripción B (ambos).
+*/
+
+select alm.nro, alm.nombre
+from almacen alm
+where exists
+(select art.cod_art /*select 1*/
+from contiene cont
+join articulo art on art.cod_art = cont.cod_art
+where cont.nro = alm.nro
+and art.descripcion like 'A')
+and exists
+(select art.cod_art /*select 1*/
+from contiene cont
+join articulo art on art.cod_art = cont.cod_art
+where cont.nro = alm.nro
+and art.descripcion like 'B')
+
+
+/*
 20. Listar la descripción de artículos compuestos por todos los materiales.
+*/
+
+
+
+/*
 21. Hallar los códigos y nombres de los proveedores que proveen al menos un material
 que se usa en algún artículo cuyo precio es mayor a $100.
 22. Listar la descripción de los artículos de mayor precio.
